@@ -131,26 +131,12 @@ const LiveWebinarView = ({
     }
   }, [chatClient, channel, isHost]);
 
-  // useEffect(() => {
-  //   call.on('call.rtmp_broadcast_started', () => {
-  //     toast.success('Webinar started successfully');
-  //     router.refresh();
-  //   });
-
-  //   call.on('call.rtmp_broadcast_failed', () => {
-  //     toast.success('Stream Failed to start. Please try again');
-  //   });
-  // }, [call]); //check
-
-  // useEffect(() => {
-  //   //TODO: feature start recording
-  // }, [call]);
-
   if (!chatClient || !channel) return null;
 
   return (
     <div className="flex flex-col w-full h-screen overflow-hidden text-foreground">
-      <div className="py-2 px-4 border-b border-border flex items-center justify-between">
+      {/* Top Bar */}
+      <div className="py-2 px-4 border-b border-border flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center space-x-2">
           <div className="bg-accent-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium flex items-center">
             <span className="relative flex h-2 w-2 mr-2">
@@ -180,7 +166,9 @@ const LiveWebinarView = ({
         </div>
       </div>
 
-      <div className="flex flex-1 p-2 gap-2 overflow-hidden">
+      {/* Main Content Area */}
+      <div className="flex flex-1 p-2 gap-2 overflow-hidden flex-col sm:flex-row">
+        {/* Video Player / Waiting Screen */}
         <div className="flex-1 rounded-lg overflow-hidden border border-border flex flex-col bg-card">
           <div className="flex-1 relative overflow-hidden">
             {hostParticipant ? (
@@ -215,13 +203,14 @@ const LiveWebinarView = ({
             )}
           </div>
 
-          <div className="p-2 border-t border-border flex items-center justify-between py-2">
+          {/* Webinar Controls/Info */}
+          <div className="p-2 border-t border-border flex flex-col sm:flex-row items-center justify-between py-2 gap-2">
             <div className="flex items-center space-x-2">
-              <div className="text-sm font- capitalize">{webinar?.title}</div>
+              <div className="text-sm font-capitalize">{webinar?.title}</div>
             </div>
 
             {isHost && (
-              <div className="flex items-center space-x-3">
+              <div className="flex flex-wrap items-center justify-center sm:justify-end gap-2">
                 <Button
                   onClick={() => setObsDialogBox(true)}
                   variant={'outline'}
@@ -260,10 +249,11 @@ const LiveWebinarView = ({
           </div>
         </div>
 
+        {/* Chat Section */}
         {showChat && (
           <Chat client={chatClient}>
             <Channel channel={channel}>
-              <div className="w-72 bg-card border border-border overflow-hidden flex flex-col">
+              <div className="w-full sm:w-72 bg-card border border-border overflow-hidden flex flex-col mt-2 sm:mt-0">
                 <div className="py-2 text-primary px-3 border-b border-border font-medium flex items-center justify-between">
                   <span className="text-white">Chat</span>
                   <span className="text-xs text-white bg-muted px-2 py-0.5 rounded-full">
@@ -288,6 +278,7 @@ const LiveWebinarView = ({
         )}
       </div>
 
+      {/* Dialog Boxes */}
       {dialogOpen && (
         <CTADialogBox
           open={dialogOpen}

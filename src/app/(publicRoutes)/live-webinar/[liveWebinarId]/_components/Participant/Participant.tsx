@@ -13,7 +13,7 @@ import {
 } from '@stream-io/video-react-sdk';
 import { AlertCircle, Cast, CircleCheckBig, WifiOff } from 'lucide-react';
 import React, { useState, useRef, useEffect } from 'react';
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid'; // Only if you truly need a new UUID for a guest if attendee is consistently null
 import LiveWebinarView from '../Common/LiveWebinarView';
 
 type Props = {
@@ -37,17 +37,20 @@ const Participant = ({ apiKey, callId, webinar, product }: Props) => {
   const clientInitialized = useRef<boolean>(false);
 
   useEffect(() => {
-    if (clientInitialized.current) return;
+    if (!attendee || clientInitialized.current) {
+      return;
+    }
 
     const initClient = async () => {
       try {
         setConnectionstatus('connecting');
+        const userIdToUse = attendee.id;
+        const userNameToUse = attendee.name;
+
         const user: User = {
-          id: attendee?.id || 'guest',
-          name: attendee?.name || 'Guest',
-          image: `https://api.dicebear.com/7.x/initials/svg?seed=${
-            attendee?.name || 'Guest'
-          }`,
+          id: userIdToUse,
+          name: userNameToUse,
+          image: `https://api.dicebear.com/7.x/initials/svg?seed=${userNameToUse}`,
         };
 
         const userToken = await getStreamIoToken(attendee);
@@ -103,25 +106,27 @@ const Participant = ({ apiKey, callId, webinar, product }: Props) => {
           });
       }
     };
-  }, [apiKey, callId, attendee, call, client, webinar.id]);
+  }, [apiKey, callId, attendee, call, client]);
 
   if (!attendee) {
-    <div className="flex items-center justify-center h-screen bg-background text-foreground">
-      <div className="text-center max-w-md p-8 rounded-lg border border-border bg-card">
-        <h2 className="text-2xl font-bold mb-4">
-          Please register to join the webinar
-        </h2>
-        <p className="text-muted-foreground mb-6">
-          Registration is required to participate in this webinar
-        </p>
-        <Button
-          onClick={() => window.location.reload()}
-          className="bg-accent-primary hover:bg-accent-primary/90 text-accent-foreground"
-        >
-          Register Now
-        </Button>
+    return (
+      <div className="flex items-center justify-center h-screen bg-background text-foreground">
+        <div className="text-center max-w-md p-8 rounded-lg border border-border bg-card">
+          <h2 className="text-2xl font-bold mb-4">
+            Please register to join the webinar
+          </h2>
+          <p className="text-muted-foreground mb-6">
+            Registration is required to participate in this webinar.
+          </p>
+          <Button
+            onClick={() => window.location.reload()}
+            className="bg-accent-primary hover:bg-accent-primary/90 text-accent-foreground"
+          >
+            Register Now
+          </Button>
+        </div>
       </div>
-    </div>;
+    );
   }
 
   if (!client || !call || !token) {
@@ -215,8 +220,8 @@ const Participant = ({ apiKey, callId, webinar, product }: Props) => {
           setShowChat={setShowChat}
           isHost={false}
           webinar={webinar}
-          username={attendee?.name || 'Guest'}
-          userId={attendee?.id || `${uuidv4()}`}
+          username={attendee.name}
+          userId={attendee.id}
           call={call}
           userToken={token}
           product={product}

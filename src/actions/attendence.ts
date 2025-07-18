@@ -2,7 +2,12 @@
 
 import { prismaClient } from '@/lib/prismaClient';
 import { AttendanceData } from '@/lib/type';
-import { AttendedTypeEnum, CtaTypeEnum, CallStatusEnum } from '@prisma/client';
+import {
+  AttendedTypeEnum,
+  CtaTypeEnum,
+  CallStatusEnum,
+  Attendance,
+} from '@prisma/client';
 import { revalidatePath } from 'next/cache';
 
 export const getWebinarAttendence = async (
@@ -328,5 +333,33 @@ export const changeCallStatus = async (
       message: 'Failed to update call status',
       error,
     };
+  }
+};
+
+// import { Attendee, Attendance } from '@prisma/client';
+
+export const getAttendeeAttendanceForWebinar = async (
+  attendeeId: string,
+  webinarId: string,
+): Promise<Attendance | null> => {
+  try {
+    if (!attendeeId || !webinarId) {
+      console.warn(
+        'getAttendeeAttendanceForWebinar: Missing attendeeId or webinarId.',
+      );
+      return null;
+    }
+    const attendanceRecord = await prismaClient.attendance.findUnique({
+      where: {
+        attendeeId_webinarId: {
+          attendeeId: attendeeId,
+          webinarId: webinarId,
+        },
+      },
+    });
+    return attendanceRecord;
+  } catch (error) {
+    console.error('Error checking attendee attendance for webinar:', error);
+    return null;
   }
 };

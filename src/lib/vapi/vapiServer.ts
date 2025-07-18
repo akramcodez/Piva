@@ -12,7 +12,7 @@ const payload = {
 const key = process.env.VAPI_PRIVATE_KEY!;
 
 const options = {
-  expiresIn: 1000,
+  expiresIn: 2000,
 };
 
 const token = jwt.sign(payload, key, options);

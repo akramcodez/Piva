@@ -110,7 +110,7 @@ export type AttendanceUser = {
   email: string;
   attendedAt: Date;
   updatedAt: Date;
-  stripeConnectId: string | null;
+  createdAt: Date;
   callStatus: CallStatusEnum;
 };
 

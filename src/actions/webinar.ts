@@ -247,7 +247,14 @@ export const getWebinarByPresenterId = async (
 
 export async function getWebinarById(webinarId: string) {
   try {
-    const webinar = prismaClient.webinar.findUnique({
+    if (!webinarId) {
+      console.error(
+        'webinarId is undefined, null, or empty. Cannot fetch webinar.',
+      );
+      return null;
+    }
+
+    const webinar = await prismaClient.webinar.findUnique({
       where: {
         id: webinarId,
       },
@@ -264,10 +271,14 @@ export async function getWebinarById(webinarId: string) {
       },
     });
 
+    if (!webinar) {
+      return null;
+    }
+
     return webinar;
   } catch (error) {
     console.error('Error fetching webinar by ID:', error);
-    throw new Error('Webinar not found');
+    throw new Error('Failed to fetch webinar due to a server error.');
   }
 }
 

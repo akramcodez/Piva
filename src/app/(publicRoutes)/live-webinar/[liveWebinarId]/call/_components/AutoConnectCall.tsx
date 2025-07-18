@@ -177,13 +177,13 @@ const AutoConnectCall = ({
   };
 
   // Main useEffect controls the call
-  useEffect(() => {
-    startCall();
+  // useEffect(() => {
+  //   startCall();
 
-    return () => {
-      stopCall();
-    };
-  }, []);
+  //   return () => {
+  //     stopCall();
+  //   };
+  // }, []);
 
   useEffect(() => {
     const onCallStart = async () => {

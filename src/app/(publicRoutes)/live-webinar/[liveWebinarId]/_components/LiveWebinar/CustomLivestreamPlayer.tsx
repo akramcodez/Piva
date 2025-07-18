@@ -28,7 +28,7 @@ const CustomLivestreamPlayer = ({
 }: Props) => {
   const client = useStreamVideoClient();
   const [call, setCall] = useState<Call>();
-  const [showChat, setShowChat] = useState(true);
+  const [showChat, setShowChat] = useState(false);
 
   useEffect(() => {
     if (!client) return;
